@@ -43,8 +43,28 @@ Window:EditOpenButton({
 })
 
 local supportedGames = {
-  [6872265039] = { Title = "Bedwars", Icon = "star" },
-  [8236395285] = { Title = "Rivals", Icon = "star" }
+  [16732694052] = { Title = "Fisch", Icon = "fish" },
+  [116061507956332] = { Title = "+1 SPRNG", Icon = "dices" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
+  [10449761463] = { Title = "TSB", Icon = "hand-fist" },
 }
 
 local placeId = game.PlaceId
@@ -67,20 +87,21 @@ end
 
 if placeId == 6872265039 then
     GameTab:Button({
-        Title = "Vxalware",
-        Desc = "The Best Free, Keyless Bedwars Script",
+        Title = "",
+        Desc = "The Best Free, Keyless  Script",
         Locked = false,
         Callback = function()
-            print("Vxalware button pressed")
+            print("")
         end
     })
+    
 elseif placeId == 8236395285 then
     GameTab:Button({
-        Title = "Rift Hub",
-        Desc = "The Best Free, Keyless Rivals Script",
+        Title = "",
+        Desc = "The Best Free, Keyless  Script",
         Locked = false,
         Callback = function()
-            print("Rift Hub button pressed")
+            print("")
         end
     })
 else
@@ -101,9 +122,33 @@ local UniversalTab = Window:Tab({
 })
 
 UniversalTab:Button({
-    Title = "Infinite Yield",
+    Title = "",
     Locked = false,
     Callback = function()
-        print("Infinite Yield button pressed")
+        print("")
     end
+})
+
+local StuffsTab = Window:Tab({
+    Title = "Stuffs",
+    Icon = "circle-user",
+    Locked = false,
+})
+
+local Paragraph = StuffsTab:Paragraph({
+    Title = "CodeCache Lite",
+    Desc = "You are running this script on the Lite edition. Please use V3 or Premium for a wider range of scripts",
+    Locked = false,
+})
+
+local Paragraph = StuffsTab:Paragraph({
+    Title = "Credits",
+    Desc = "Credits to Fotagesus, SynthX, and the various owners of the scripts. Without these people CodeCache Lite would not have been possible",
+    Locked = false,
+})
+
+local Paragraph = StuffsTab:Paragraph({
+    Title = "Keybind",
+    Desc = "If you didn't read the message at the start of the script execution, press 'K' to toggle the GUI",
+    Locked = false,
 })

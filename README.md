@@ -1,4 +1,4 @@
-# Vxalware Loader
+# CodeCache
 *CodeCache is a ScriptHub with over 100+ scripts for different games in one GUI!*
 ## Usage:
 1. Download the specific scripting utility of your choice
@@ -12,4 +12,4 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/vxalware-bedwars-owne
 - Footagesus (UI Library)
 - Sirius (UI Library)
 ## Update: [BETA]
-This script is still not finished. Please wait a while for it to be released
+This script is still not finished. Please wait a while for it to be released.

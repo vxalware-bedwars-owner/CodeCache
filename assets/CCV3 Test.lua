@@ -1,11 +1,12 @@
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+local Version = "1.6.61"
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/download/" .. Version .. "/main.lua"))()
 
 local Window = WindUI:CreateWindow({
-    Title = "CodeCache Lite",
+    Title = "CodeCache V3",
     Icon = "moon-star",
     Author = "Unreleased",
-    Folder = "Lite",
-
+    Folder = "CCV3",
+    
     Size = UDim2.fromOffset(580, 460),
     MinSize = Vector2.new(560, 350),
     MaxSize = Vector2.new(850, 560),
@@ -14,9 +15,9 @@ local Window = WindUI:CreateWindow({
     Resizable = true,
     SideBarWidth = 200,
     BackgroundImageTransparency = 0.42,
-    HideSearchBar = true,
+    HideSearchBar = false,
     ScrollBarEnabled = true,
-
+    
     User = {
         Enabled = true,
         Anonymous = false,
@@ -34,7 +35,7 @@ Window:EditOpenButton({
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
     Color = ColorSequence.new(
-        Color3.fromHex("FFFFFF"),
+        Color3.fromHex("FFFFFF"), 
         Color3.fromHex("FFFFFF")
     ),
     OnlyMobile = true,
@@ -42,18 +43,77 @@ Window:EditOpenButton({
     Draggable = true,
 })
 
+-- safeWriteConfig API
+local HttpService = game:GetService("HttpService")
+local folderName = "Vxalware"
+local configFilePath = folderName .. "/VXConfig.json"
+
+local hasFileApi = (type(isfolder) == "function")
+               and (type(makefolder) == "function")
+               and (type(isfile) == "function")
+               and (type(readfile) == "function")
+               and (type(writefile) == "function")
+
+local config = {
+    dropdown = {},
+    toggle = {},
+    slider = {},
+}
+
+local function safeWriteConfig()
+    if not hasFileApi then return false end
+    local ok, err = pcall(function()
+        writefile(configFilePath, HttpService:JSONEncode(config))
+    end)
+    return ok
+end
+
+local function loadConfig()
+    if not hasFileApi then return end
+    if not isfolder(folderName) then
+        pcall(makefolder, folderName)
+    end
+    if isfile(configFilePath) then
+        local ok, data = pcall(readfile, configFilePath)
+        if ok and data then
+            local succ, decoded = pcall(HttpService.JSONDecode, HttpService, data)
+            if succ and type(decoded) == "table" then
+                -- keep defaults
+                config.dropdown = decoded.dropdown or config.dropdown
+                config.toggle = decoded.toggle or config.toggle
+                config.slider = decoded.slider or config.slider
+            end
+        end
+    else
+        safeWriteConfig()
+    end
+end
+
+loadConfig()
+
+if not hasFileApi then
+    WindUI:Notify({
+        Title = "Config Disabled",
+        Content = "API Unreachable — config will not be saved.",
+        Duration = 5,
+        Icon = "x",
+    })
+end
+
 -- runWithNotify API
 local _runWithNotify_firstRun = {}
 local function runWithNotify(title, fn, opts)
     -- API Directions:
-    -- kind = "dropdown" | "toggle" | nil
+    -- kind = "dropdown", "toggle", or "slider"
     -- getLabel = function() -> string  (for dropdowns)
     -- getState = function() -> boolean (for toggles)
-    -- suppressNone = true|false (for dropdowns)
+    -- getValue = function() -> value (for sliders)
+    -- suppressNone = true/false (for dropdowns)
     opts = opts or {}
     local kind = opts.kind
     local getLabel = opts.getLabel
     local getState = opts.getState
+    local getValue = opts.getValue
     local suppressNone = opts.suppressNone
 
     -- Silent run | Error run
@@ -119,6 +179,21 @@ local function runWithNotify(title, fn, opts)
         return
     end
 
+    -- Success run | Slider
+    if kind == "slider" and type(getValue) == "function" then
+        local value = getValue()
+        local valueStr = tostring(value)
+        if type(value) == "number" then
+            valueStr = tostring(tonumber(string.format("%.6f", value))):gsub("%.?0+$", "")
+        end
+        WindUI:Notify({
+            Title = "Success",
+            Content = tostring(title) .. " set to " .. valueStr,
+            Duration = 1.5,
+        })
+        return
+    end
+
     -- Success run | Universal
     WindUI:Notify({
         Title = "Success",
@@ -127,100 +202,41 @@ local function runWithNotify(title, fn, opts)
     })
 end
 
--- place support loadstring here
-
-local gameName = game.PlaceId
-local gameInfo = supportedGames[placeId]
-
-local GameTab
-if gameInfo then
-    GameTab = Window:Tab({
-        Title = gameInfo.Title,
-        Icon = gameInfo.Icon,
-        Locked = false,
-    })
-else
-    GameTab = Window:Tab({
-        Title = "Unknown",
-        Icon = "boxes",
-        Locked = false,
-    })
-end
-
-if gameName == "" then
-    GameTab:Button({
-        Title = "",
-        Desc = "The Best Free, Keyless  Script",
-        Locked = false,
-        Callback = function()
-            runWithNotify("", function()
-                loadstring(game:HttpGet("",true))()
-            end)
-        end
-    })
-elseif gameName == "" then
-    GameTab:Button({
-        Title = "",
-        Desc = "The Best Free, Keyless  Script",
-        Locked = false,
-        Callback = function()
-            runWithNotify("", function()
-                loadstring(game:HttpGet("",true))()
-            end)
-        end
-    })
-else
-    GameTab:Button({
-        Title = "Unknown",
-        Desc = "Game Not Supported!",
-        Locked = false,
-        Callback = function()
-            print("Game Not Supported!")
-        end
-    })
-end
-
-local UniversalTab = Window:Tab({
-    Title = "Universal",
-    Icon = "atom",
-    Locked = false,
-})
-
-UniversalTab:Button({
-    Title = "",
-    Locked = false,
+-- Universal
+local UniverTab = Window:Tab({ Title = "Universal", Icon = "earth" })
+local Button = VoidTab:Button({
+    Title = "Universal Button",
     Callback = function()
-        print("")
+        runWithNotify("Universal Button", function()
+            print("Universal Button")
+        end)
     end
 })
 
-local StuffsTab = Window:Tab({
-    Title = "Stuffs",
-    Icon = "circle-user",
+-- Credits tab
+local CreditsTab = Window:Tab({ Title = "Credits", Icon = "star" })
+local Paragraph = CreditsTab:Paragraph({
+    Title = "Wind UI",
+    Desc = "This script is made by SynthX. All credits go to footagesus for making the UI Library",
     Locked = false,
 })
 
-local Paragraph = StuffsTab:Paragraph({
-    Title = "CodeCache Lite",
-    Desc = "You are running this script on the Lite edition. Please use V3 or Premium for a wider range of scripts",
+local Paragraph = CreditsTab:Paragraph({
+    Title = "Scripts",
+    Desc = "All credits go to the various owners of the given scripts used in this script",
     Locked = false,
 })
 
-local Paragraph = StuffsTab:Paragraph({
-    Title = "Credits",
-    Desc = "Credits to people who made this script possible",
-    Locked = false,
-})
-
-local Paragraph = StuffsTab:Paragraph({
+local Paragraph = CreditsTab:Paragraph({
     Title = "Keybind",
     Desc = "If you didn't read the message at the start of the script execution, press 'K' to toggle the GUI",
     Locked = false,
 })
 
+-- Notification
 WindUI:Notify({
     Title = "Successfully Loaded!",
-    Content = "Thank you for using CodeCache. Press 'K' to toggle GUI",
+    Content = "Thank you for using Vxalware. Press 'K' to toggle GUI",
     Duration = 5,
     Icon = "check"
 })

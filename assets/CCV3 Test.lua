@@ -204,11 +204,22 @@ end
 
 -- Universal
 local UniverTab = Window:Tab({ Title = "Universal", Icon = "earth" })
-local Button = VoidTab:Button({
+local Button = UniverTab:Button({
     Title = "Universal Button",
     Callback = function()
         runWithNotify("Universal Button", function()
             print("Universal Button")
+        end)
+    end
+})
+
+Window:Divider() -- Divider | Fisch
+local FischTab = Window:Tab({ Title = "Fisch", Icon = "fish-symbol" })
+local Button = FischTab:Button({
+    Title = "Fisch Button",
+    Callback = function()
+        runWithNotify("Fisch Button", function()
+            print("Fisch Button")
         end)
     end
 })
@@ -236,7 +247,7 @@ local Paragraph = CreditsTab:Paragraph({
 -- Notification
 WindUI:Notify({
     Title = "Successfully Loaded!",
-    Content = "Thank you for using Vxalware. Press 'K' to toggle GUI",
+    Content = "Thank you for using CodeCache. Press 'K' to toggle GUI",
     Duration = 5,
     Icon = "check"
 })

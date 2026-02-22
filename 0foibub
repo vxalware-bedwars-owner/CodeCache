@@ -511,7 +511,19 @@ local Button = OthersTab:Button({
 })
 
 local custoSection = OthersTab:Section({ Title = "Customization" })
+-- ======= CONFIG & INITIALIZATION =======
 local FovSaved = config.slider["Fov Changer"] or 100
+local MODULE = "VXAL_FOV_CHANGER"
+
+-- Apply saved FOV immediately on startup
+local camera = workspace.CurrentCamera
+if camera and FovSaved then
+    pcall(function()
+        camera.FieldOfView = FovSaved
+    end)
+end
+
+-- ======= CREATE THE SLIDER =======
 local Slider = OthersTab:Slider({
     Title = "Fov Changer",
     Step = 10,
@@ -520,25 +532,31 @@ local Slider = OthersTab:Slider({
         Max = 120,
         Default = FovSaved,
     },
+
     Callback = function(value)
         runWithNotify("FOV", function()
-            local MODULE = "VXAL_FOV_CHANGER"
+
             local state = getgenv()[MODULE]
+
+            -- Create module if it doesn't exist
             if not state then
-                local camera = workspace.CurrentCamera
+                local cam = workspace.CurrentCamera
                 state = {
                     Running = true,
                     DesiredFOV = value,
-                    OriginalFOV = camera and camera.FieldOfView or nil,
+                    OriginalFOV = cam and cam.FieldOfView or nil,
                     Connections = {},
                 }
 
+                -- Enforcement loop (runs while Running)
                 task.spawn(function()
                     while state.Running do
                         local cam = workspace.CurrentCamera
+
+                        -- Capture original FOV once
                         if cam and state.OriginalFOV == nil then
                             state.OriginalFOV = cam.FieldOfView
-                            print("[FOV Changer] OriginalFOV =", state.OriginalFOV)
+                            print("[FOV Changer] OriginalFOV captured:", state.OriginalFOV)
                         end
 
                         if cam then
@@ -546,9 +564,11 @@ local Slider = OthersTab:Slider({
                                 cam.FieldOfView = state.DesiredFOV
                             end)
                         end
+
                         task.wait(0.1)
                     end
 
+                    -- Restore original FOV if stopped
                     local cam = workspace.CurrentCamera
                     if cam and state.OriginalFOV ~= nil then
                         pcall(function()
@@ -557,6 +577,7 @@ local Slider = OthersTab:Slider({
                     end
                 end)
 
+                -- Handle camera replacement
                 local conn = workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
                     local cam = workspace.CurrentCamera
                     if cam and state.Running then
@@ -568,26 +589,32 @@ local Slider = OthersTab:Slider({
 
                 table.insert(state.Connections, conn)
                 getgenv()[MODULE] = state
+
             else
+                -- Module exists, just update desired FOV
                 state.DesiredFOV = value
             end
 
+            -- Apply instantly to avoid visual delay
             local cam = workspace.CurrentCamera
             if cam then
                 pcall(function()
                     cam.FieldOfView = value
                 end)
             end
+
             print("[FOV Changer] DesiredFOV =", value)
+
         end, {
             kind = "slider",
             getValue = function() return value end
         })
+
+        -- Save config
         config.slider["Fov Changer"] = value
         safeWriteConfig()
     end
 })
-Slider:Callback(FovSaved)
 
 local AnimationSaved = config.dropdown["Animation Changer"]
 local Dropdown = OthersTab:Dropdown({

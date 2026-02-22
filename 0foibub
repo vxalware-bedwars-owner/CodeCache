@@ -511,14 +511,14 @@ local Button = OthersTab:Button({
 })
 
 local custoSection = OthersTab:Section({ Title = "Customization" })
-local FovSaved = config.slider["Fov Changer"]
+local FovSaved = config.slider["Fov Changer"] or 100
 local Slider = OthersTab:Slider({
     Title = "Fov Changer",
     Step = 10,
     Value = {
         Min = 60,
         Max = 120,
-        Default = FovSaved or 100,
+        Default = FovSaved,
     },
     Callback = function(value)
         runWithNotify("FOV", function()
@@ -587,6 +587,7 @@ local Slider = OthersTab:Slider({
         safeWriteConfig()
     end
 })
+Slider:Callback(FovSaved)
 
 local AnimationSaved = config.dropdown["Animation Changer"]
 local Dropdown = OthersTab:Dropdown({

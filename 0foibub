@@ -512,7 +512,18 @@ local Button = OthersTab:Button({
 
 local custoSection = OthersTab:Section({ Title = "Customization" })
 -- ======= CONFIG & INITIALIZATION =======
-local FovSaved = config.slider["Fov Changer"] or 100
+local FovSavedRaw = config.slider["Fov Changer"]
+local FovSaved
+
+-- Safe extraction of numeric value
+if type(FovSavedRaw) == "number" then
+    FovSaved = FovSavedRaw
+elseif type(FovSavedRaw) == "table" and type(FovSavedRaw.Value) == "number" then
+    FovSaved = FovSavedRaw.Value
+else
+    FovSaved = 100
+end
+
 local MODULE = "VXAL_FOV_CHANGER"
 
 -- Apply saved FOV immediately on startup
